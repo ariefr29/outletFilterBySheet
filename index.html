@@ -35,9 +35,9 @@
     <div class="row g-2 mb-3">
       <div class="col-12 col-md-3">
         <select id="filterType" class="form-select">
+          <option value="Sales Force">Sales</option>
           <option value="ID">ID</option>
-          <option value="Nama Outlet">Nama Outlet</option>
-          <option value="Sales Force">Sales Force</option>
+          <option value="Nama Outlet">Outlet</option>
         </select>
       </div>
       <div class="col-12 col-md-6">
@@ -51,13 +51,7 @@
     <div id="tableContainer" class="table-responsive d-none">
       <table class="table table-bordered table-striped">
         <thead>
-          <tr>
-            <th>Tgl</th>
-            <th>Nama Outlet</th>
-            <th>Sales Force</th>
-            <th>Transaksi All</th>
-            <th>Detail</th>
-          </tr>
+          <tr id="headRow"></tr>
         </thead>
         <tbody id="tableBody"></tbody>
       </table>
@@ -122,6 +116,16 @@
   }
 
   function renderTable(data) {
+    // nama tabel
+    const headRow = document.getElementById('headRow');
+    headRow.innerHTML = `
+      <th>${namaRow(0)}</th>
+      <th>${namaRow(2)}</th>
+      <th>${namaRow(4)}</th>
+      <th>${namaRow(8)}</th>
+      <th>Detail</th>
+    `;
+    // tabel
     const tableContainer = document.getElementById("tableContainer");
     const tableBody = document.getElementById("tableBody");
 
@@ -151,6 +155,12 @@
     });
   }
 
+  // namaRow
+  function namaRow(index) {
+    return headers[index] || '';
+  }
+
+  // detail popup modal
   function showDetail(index) {
     const d = filteredData[index];
     const content = `
