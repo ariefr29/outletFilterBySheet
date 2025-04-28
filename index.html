@@ -116,15 +116,18 @@
   }
 
   function renderTable(data) {
+    // Indeks untuk nama row dan data (misal: Tgl, Nama Outlet, Sales Force, Transaksi All)
+    const columnIndexes = [0, 2, 4, 8]; 
+
     // nama tabel
     const headRow = document.getElementById('headRow');
-    headRow.innerHTML = `
-      <th>${namaRow(0)}</th>
-      <th>${namaRow(2)}</th>
-      <th>${namaRow(4)}</th>
-      <th>${namaRow(8)}</th>
-      <th>Detail</th>
-    `;
+    let headHTML = '';
+    columnIndexes.forEach(index => {
+      headHTML += `<th>${namaRow(index)}</th>`;
+    });
+    headHTML += '<th>Detail</th>'; // Menambahkan kolom "Detail"
+    headRow.innerHTML = headHTML;
+
     // tabel
     const tableContainer = document.getElementById("tableContainer");
     const tableBody = document.getElementById("tableBody");
@@ -133,15 +136,13 @@
 
     let html = "";
     data.forEach((row, index) => {
+      html += "<tr>";
+      columnIndexes.forEach(colIndex => {
+        html += `<td>${row[colIndex] || ''}</td>`;  // Ambil data sesuai dengan index
+      });
       html += `
-        <tr>
-          <td>${row[0] || ''}</td>  <!-- Tgl -->
-          <td>${row[2] || ''}</td>  <!-- Nama Outlet -->
-          <td>${row[4] || ''}</td>  <!-- Sales Force -->
-          <td>${row[8] || ''}</td>  <!-- Transaksi All -->
-          <td><button class="btn btn-sm btn-info detail-btn" data-index="${index}">Detail</button></td>
-        </tr>
-      `;
+        <td><button class="btn btn-sm btn-info detail-btn" data-index="${index}">Detail</button></td>
+      </tr>`;
     });
     tableBody.innerHTML = html;
 
