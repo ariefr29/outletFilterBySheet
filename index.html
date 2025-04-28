@@ -131,10 +131,10 @@
     data.forEach((row, index) => {
       html += `
         <tr>
-          <td>${row[headers.indexOf('Tgl')] || ''}</td>
-          <td>${row[headers.indexOf('Nama Outlet')] || ''}</td>
-          <td>${row[headers.indexOf('Sales Force')] || ''}</td>
-          <td>${row[headers.indexOf('Transaksi All')] || ''}</td>
+          <td>${row[0] || ''}</td>  <!-- Tgl -->
+          <td>${row[2] || ''}</td>  <!-- Nama Outlet -->
+          <td>${row[4] || ''}</td>  <!-- Sales Force -->
+          <td>${row[8] || ''}</td>  <!-- Transaksi All -->
           <td><button class="btn btn-sm btn-info detail-btn" data-index="${index}">Detail</button></td>
         </tr>
       `;
@@ -153,12 +153,55 @@
 
   function showDetail(index) {
     const d = filteredData[index];
-    let content = `✮ 🅿🅴🆁🅵🅾🆁🅼🅰🅽🅲🅴 🅾🆄🆃🅻🅴🆃 ✮<br><br>`;
-
-    // Contoh ngeloop semua data untuk tampilkan dinamis
-    headers.forEach((header, i) => {
-      content += `<b>${header}</b> = ${d[i] || ''}<br>`;
-    });
+    const content = `
+        ✮ 🅿🅴🆁🅵🅾🆁🅼🅰🅽🅲🅴 🅾🆄🆃🅻🅴🆃 ✮<br><br>
+        <b>Update Tgl</b> = ${d[0]}<br>
+        -------------------------------------<br>
+        🔑 <b>Id</b> = ${d[1]}<br>
+        🔖️️ <b>Nama Outlet</b> = ${d[2]}<br>
+        📞 <b>No Rs</b> = ${d[3]}<br>
+        🙍‍♂️ <b>Sales Force</b> = ${d[4]}<br>
+        🗓️ <b>Hari</b> = ${d[5]}<br>
+        🏦 <b>Tap</b> = ${d[6]}<br>
+        🏦 <b>Cluster</b> = ${d[7]}<br>
+        -------------------------------------<br>
+        📌 <b>Transaksi ALL</b> = ${d[8]}<br>
+        📌 <b>%MoM</b> = ${d[9]}<br>
+        📌 <b>Ket</b> = ${d[10]}<br>
+        💰 <b>Revenue ALL</b> = ${d[11]}<br>
+        -------------------------------------<br>
+        📌 <b>Transaksi CVM</b> = ${d[12]}<br>
+        📌 <b>%MoM</b> = ${d[13]}<br>
+        📌 <b>Ket</b> = ${d[14]}<br>
+        💰 <b>Revenue CVM</b> = ${d[15]}<br>
+        -------------------------------------<br>
+        📌 <b>ST SP</b> = ${d[16]}<br>
+        📌 <b>%MoM</b> = ${d[17]}<br>
+        📌 <b>Ket</b> = ${d[18]}<br>
+        -------------------------------------<br>
+        📌 <b>SO SP</b> = ${d[19]}<br>
+        📌 <b>%MoM</b> = ${d[20]}<br>
+        📌 <b>Ket</b> = ${d[21]}<br>
+        -------------------------------------<br>
+        📌 <b>ST VF</b> = ${d[22]}<br>
+        📌 <b>%MoM</b> = ${d[23]}<br>
+        📌 <b>Ket</b> = ${d[24]}<br>
+        -------------------------------------<br>
+        📌 <b>SO VF</b> = ${d[25]}<br>
+        📌 <b>%MoM</b> = ${d[26]}<br>
+        📌 <b>Ket</b> = ${d[27]}<br>
+        -------------------------------------<br>
+        【﻿ＦＯＫＵＳ】 = ${d[2]}<br>
+        👇  👇  👇  👇<br>
+        ⚠️<b>Trx ALL</b> = ${d[28]}<br>
+        ⚠️<b>Trx CVM</b> = ${d[29]}<br>
+        ⚠️<b>ST SP</b> = ${d[30]}<br>
+        ⚠️<b>SO SP</b> = ${d[31]}<br>
+        ⚠️<b>ST VF</b> = ${d[32]}<br>
+        ⚠️<b>SO VF</b> = ${d[33]}<br>
+        -------------------------------------<br>
+        𝓓𝓲𝓲𝓷𝓰𝓪𝓽𝓴𝓪𝓷 & 𝓓𝓲𝓮𝓭𝓾𝓴𝓪𝓼𝓲 𝓛𝓪𝓰𝓲 𝓞𝓾𝓽𝓵𝓮𝓽 𝔂𝓪𝓷𝓰 𝓑𝓮𝓵𝓾𝓶 𝓣𝓻𝓪𝓷𝓼𝓪𝓴𝓼𝓲 ‼️
+      `;
 
     document.getElementById("modalContent").innerHTML = content;
     new bootstrap.Modal(document.getElementById('detailModal')).show();
