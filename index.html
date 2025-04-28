@@ -44,13 +44,13 @@
         <input type="text" id="searchInput" class="form-control" placeholder="Masukkan minimal 4 karakter...">
       </div>
       <div class="col-12 col-md-3">
-        <button class="btn btn-primary w-100" onclick="filterData()">Cari</button>
+        <button id="searchButton" class="btn btn-primary w-100">Cari</button>
       </div>
     </div>
 
     <div id="tableContainer" class="table-responsive d-none">
       <table class="table table-bordered table-striped">
-        <thead class="table-dark">
+        <thead>
           <tr>
             <th>Tgl</th>
             <th>Nama Outlet</th>
@@ -79,117 +79,98 @@
 
   </div>
 
-  <script>
-    const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQTjeN7l-SSuGaD61pGJC4ECAS1e-O6BMVRsQsxe7Wh6eoN53fEKKK8RafV8Z--N2Svo5a4JtRlqEIA/pub?gid=0&single=true&output=csv";
-    let allData = [];
+<script>
+  const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ5GHQCKwdkHB44V2Z7lS6qQ8YkFd5FagUHZ3xXRLuxdl-41XSdlXznAjeGNErOxJbYA_9M3LJ330wA/pub?output=csv";
 
-    function loadSheetData() {
-      Papa.parse(sheetURL, {
-        download: true,
-        header: true,
-        skipEmptyLines: true,
-        complete: function(results) {
-          allData = results.data;
-        }
-      });
-    }
+  let allData = [];
+  let headers = []; // Menyimpan nama kolom dari sheet
+  let filteredData = [];
 
-    function filterData() {
-      const filterType = document.getElementById("filterType").value;
-      const searchValue = document.getElementById("searchInput").value.trim().toLowerCase();
-
-      if (searchValue.length < 4) {
-        alert("Masukkan minimal 4 karakter untuk pencarian!");
-        return;
+  function loadSheetData() {
+    Papa.parse(sheetURL, {
+      download: true,
+      header: false, // ubah ke false agar bisa ambil raw data
+      skipEmptyLines: true,
+      complete: function(results) {
+        headers = results.data[0];     // baris pertama = header
+        allData = results.data.slice(1); // sisanya = data
       }
+    });
+  }
 
-      const filtered = allData.filter(row => {
-        const cellValue = (row[filterType] || '').toString().toLowerCase();
-        return cellValue.includes(searchValue);
-      });
+  function filterData() {
+    const filterType = document.getElementById("filterType").value;
+    const searchValue = document.getElementById("searchInput").value.trim().toLowerCase();
 
-      renderTable(filtered);
+    if (searchValue.length < 4) {
+      alert("Masukkan minimal 4 karakter untuk pencarian!");
+      return;
     }
 
-    function renderTable(data) {
-      const tableContainer = document.getElementById("tableContainer");
-      const tableBody = document.getElementById("tableBody");
-
-      tableBody.innerHTML = "";
-
-      data.forEach((row, index) => {
-        tableBody.innerHTML += `
-          <tr>
-            <td>${row['Tgl'] || ''}</td>
-            <td>${row['Nama Outlet'] || ''}</td>
-            <td>${row['Sales Force'] || ''}</td>
-            <td>${row['Transaksi All'] || ''}</td>
-            <td><button class="btn btn-sm btn-info" onclick="showDetail(${index})">Detail</button></td>
-          </tr>
-        `;
-      });
-
-      tableContainer.classList.remove("d-none");
+    const filterIndex = headers.indexOf(filterType);
+    if (filterIndex === -1) {
+      alert("Kolom pencarian tidak ditemukan!");
+      return;
     }
 
-    function showDetail(index) {
-      const d = allData[index];
-      const content = `
-        ✮ 🅿🅴🆁🅵🅾🆁🅼🅰🅽🅲🅴 🅾🆄🆃🅻🅴🆃 ✮<br><br>
-        <b>Update Tgl</b> = ${d['Tgl']}<br>
-        -------------------------------------<br>
-        🔑 <b>Id</b> = ${d['ID']}<br>
-        🔖️️ <b>Nama Outlet</b> = ${d['Nama Outlet']}<br>
-        📞 <b>No Rs</b> = ${d['No Rs']}<br>
-        🙍‍♂️ <b>Sales Force</b> = ${d['Sales Force']}<br>
-        🗓️ <b>Hari</b> = ${d['Hari']}<br>
-        🏦 <b>Tap</b> = ${d['Tap']}<br>
-        🏦 <b>Cluster</b> = ${d['Cluster']}<br>
-        -------------------------------------<br>
-        📌 <b>Transaksi ALL</b> = ${d['Transaksi All']}<br>
-        📌 <b>%MoM</b> = ${d['%MoM']}<br>
-        📌 <b>Ket</b> = ${d['OP All Transaksi']}<br>
-        💰 <b>Revenue ALL</b> = ${d['Revenue All']}<br>
-        -------------------------------------<br>
-        📌 <b>Transaksi CVM</b> = ${d['CVM']}<br>
-        📌 <b>%MoM</b> = ${d['%MoM .1']}<br>
-        📌 <b>Ket</b> = ${d['OP CVM']}<br>
-        💰 <b>Revenue CVM</b> = ${d['Revenue CVM']}<br>
-        -------------------------------------<br>
-        📌 <b>ST SP</b> = ${d['ST SP']}<br>
-        📌 <b>%MoM</b> = ${d['%MoM .2']}<br>
-        📌 <b>Ket</b> = ${d['OA ST SP']}<br>
-        -------------------------------------<br>
-        📌 <b>SO SP</b> = ${d['SO SP']}<br>
-        📌 <b>%MoM</b> = ${d['%MoM .3']}<br>
-        📌 <b>Ket</b> = ${d['OA SO SP']}<br>
-        -------------------------------------<br>
-        📌 <b>ST VF</b> = ${d['ST VF']}<br>
-        📌 <b>%MoM</b> = ${d['%MoM .4']}<br>
-        📌 <b>Ket</b> = ${d['OP ST VF']}<br>
-        -------------------------------------<br>
-        📌 <b>SO VF</b> = ${d['SO VF']}<br>
-        📌 <b>%MoM</b> = ${d['%MoM .5']}<br>
-        📌 <b>Ket</b> = ${d['OP SO VF']}<br>
-        -------------------------------------<br>
-        【﻿ＦＯＫＵＳ】 = ${d['Nama Outlet']}<br>
-        👇  👇  👇  👇<br>
-        ⚠️<b>Trx ALL</b> = ${d['Transaksi All']}<br>
-        ⚠️<b>Trx CVM</b> = ${d['CVM']}<br>
-        ⚠️<b>ST SP</b> = ${d['ST SP']}<br>
-        ⚠️<b>SO SP</b> = ${d['SO SP']}<br>
-        ⚠️<b>ST VF</b> = ${d['ST VF']}<br>
-        ⚠️<b>SO VF</b> = ${d['SO VF']}<br>
-        -------------------------------------<br>
-        𝓓𝓲𝓲𝓷𝓰𝓪𝓽𝓴𝓪𝓷 & 𝓓𝓲𝓮𝓭𝓾𝓴𝓪𝓼𝓲 𝓛𝓪𝓰𝓲 𝓞𝓾𝓽𝓵𝓮𝓽 𝔂𝓪𝓷𝓰 𝓑𝓮𝓵𝓾𝓶 𝓣𝓻𝓪𝓷𝓼𝓪𝓴𝓼𝓲 ‼️
+    filteredData = allData.filter(row => {
+      const cellValue = (row[filterIndex] || '').toString().toLowerCase();
+      return cellValue.includes(searchValue);
+    });
+
+    renderTable(filteredData);
+  }
+
+  function renderTable(data) {
+    const tableContainer = document.getElementById("tableContainer");
+    const tableBody = document.getElementById("tableBody");
+
+    tableBody.innerHTML = "";
+
+    let html = "";
+    data.forEach((row, index) => {
+      html += `
+        <tr>
+          <td>${row[headers.indexOf('Tgl')] || ''}</td>
+          <td>${row[headers.indexOf('Nama Outlet')] || ''}</td>
+          <td>${row[headers.indexOf('Sales Force')] || ''}</td>
+          <td>${row[headers.indexOf('Transaksi All')] || ''}</td>
+          <td><button class="btn btn-sm btn-info detail-btn" data-index="${index}">Detail</button></td>
+        </tr>
       `;
+    });
+    tableBody.innerHTML = html;
 
-      document.getElementById("modalContent").innerHTML = content;
-      new bootstrap.Modal(document.getElementById('detailModal')).show();
-    }
+    tableContainer.classList.remove("d-none");
 
+    document.querySelectorAll(".detail-btn").forEach(button => {
+      button.addEventListener("click", function() {
+        const index = this.getAttribute("data-index");
+        showDetail(index);
+      });
+    });
+  }
+
+  function showDetail(index) {
+    const d = filteredData[index];
+    let content = `✮ 🅿🅴🆁🅵🅾🆁🅼🅰🅽🅲🅴 🅾🆄🆃🅻🅴🆃 ✮<br><br>`;
+
+    // Contoh ngeloop semua data untuk tampilkan dinamis
+    headers.forEach((header, i) => {
+      content += `<b>${header}</b> = ${d[i] || ''}<br>`;
+    });
+
+    document.getElementById("modalContent").innerHTML = content;
+    new bootstrap.Modal(document.getElementById('detailModal')).show();
+  }
+
+  document.addEventListener("DOMContentLoaded", function() {
     loadSheetData();
-  </script>
+    document.getElementById("searchButton").addEventListener("click", filterData);
+  });
+</script>
+
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
